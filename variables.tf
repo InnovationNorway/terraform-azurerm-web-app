@@ -7,8 +7,8 @@ variable "location" {
   description = "The azure datacenter location where the resources should be created."
 }
 
-variable "web_app_name" {
-  description = "The name for the function app. Without environment naming."
+variable "name" {
+  description = "The name for the web app."
 }
 
 variable "sku_tier" {
