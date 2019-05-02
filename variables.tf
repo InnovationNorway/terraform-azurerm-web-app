@@ -28,14 +28,10 @@ variable "min_tls_version" {
   default     = "1.2"
 }
 
-variable "restrict_ip" {
-  default     = "0.0.0.0"
-  description = "The ipv4 address you want to allow accessing the web app"
-}
-
-variable "restrict_subnet_mask" {
-  default     = "0.0.0.0"
-  description = "The subnet mask for the ipv4 address you want to allow accessing the web app, defaults to 0.0.0.0 (every ip allowed)"
+variable "ip_restrictions" {
+  type        = list(string)
+  default     = []
+  description = "A list of IP addresses in CIDR format specifying Access Restrictions."
 }
 
 variable "ftps_state" {

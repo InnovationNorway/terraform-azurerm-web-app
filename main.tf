@@ -1,5 +1,12 @@
 locals {
   app_service_plan_id = coalesce(var.app_service_plan_id, azurerm_app_service_plan.main[0].id)
+
+  ip_restrictions = [
+    for prefix in var.ip_restrictions : {
+      ip_address  = split("/", prefix)[0]
+      subnet_mask = cidrnetmask(prefix)
+    }
+  ]
 }
 
 resource "azurerm_app_service_plan" "main" {
@@ -30,13 +37,8 @@ resource "azurerm_app_service" "main" {
     always_on       = true
     http2_enabled   = true
     min_tls_version = var.min_tls_version
-
-    ip_restriction {
-      ip_address  = var.restrict_ip
-      subnet_mask = var.restrict_subnet_mask
-    }
-
-    ftps_state = var.ftps_state
+    ip_restriction  = local.ip_restrictions
+    ftps_state      = var.ftps_state
   }
 
   identity {
