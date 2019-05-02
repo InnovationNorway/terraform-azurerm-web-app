@@ -8,15 +8,7 @@ resource "azurerm_app_service_plan" "serviceplan" {
     size = var.sku_size
   }
 
-  tags = merge(
-    var.tags,
-    {
-      "environment" = var.environment
-    },
-    {
-      "release" = var.release
-    },
-  )
+  tags = var.tags
 }
 
 resource "azurerm_app_service" "webapp" {
@@ -27,15 +19,7 @@ resource "azurerm_app_service" "webapp" {
   https_only              = true
   client_affinity_enabled = false
 
-  tags = merge(
-    var.tags,
-    {
-      "environment" = var.environment
-    },
-    {
-      "release" = var.release
-    },
-  )
+  tags = var.tags
 
   site_config {
     always_on       = true

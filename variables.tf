@@ -60,14 +60,3 @@ variable "tags" {
   default = {
   }
 }
-
-variable "environment" {
-  default     = "lab"
-  description = "The environment where the infrastructure is deployed."
-}
-
-variable "release" {
-  default     = ""
-  description = "The release the deploy is based on."
-}
-
