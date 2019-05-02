@@ -17,14 +17,10 @@ variable "app_service_plan_id" {
   description = "The ID of an existing app service plan to use for the web app."
 }
 
-variable "sku_tier" {
-  description = "Which tier the app service plan will have."
-  default     = "Standard"
-}
-
-variable "sku_size" {
-  description = "Which size the app service plan tier will have."
-  default     = "S1"
+variable "sku" {
+  type        = string
+  default     = "Basic_B1"
+  description = "The SKU of an app service plan to create for the web app."
 }
 
 variable "min_tls_version" {

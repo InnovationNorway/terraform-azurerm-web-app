@@ -9,8 +9,8 @@ resource "azurerm_app_service_plan" "main" {
   resource_group_name = var.resource_group_name
 
   sku {
-    tier = var.sku_tier
-    size = var.sku_size
+    tier = split("_", var.sku)[0]
+    size = split("_", var.sku)[1]
   }
 
   tags = var.tags
