@@ -24,7 +24,7 @@ resource "azurerm_app_service_plan" "main" {
 }
 
 resource "azurerm_app_service" "main" {
-  name                    = local.name
+  name                    = var.name
   location                = var.location
   resource_group_name     = var.resource_group_name
   app_service_plan_id     = local.app_service_plan_id
