@@ -1,4 +1,4 @@
-resource "azurerm_app_service_plan" "serviceplan" {
+resource "azurerm_app_service_plan" "main" {
   name                = local.app_service_plan_name
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -11,11 +11,11 @@ resource "azurerm_app_service_plan" "serviceplan" {
   tags = var.tags
 }
 
-resource "azurerm_app_service" "webapp" {
+resource "azurerm_app_service" "main" {
   name                    = local.name
   location                = var.location
   resource_group_name     = var.resource_group_name
-  app_service_plan_id     = azurerm_app_service_plan.serviceplan.id
+  app_service_plan_id     = azurerm_app_service_plan.main.id
   https_only              = true
   client_affinity_enabled = false
 
@@ -49,7 +49,7 @@ resource "azurerm_monitor_autoscale_setting" "app_service_auto_scale" {
   name                = local.autoscale_settings_name
   resource_group_name = var.resource_group_name
   location            = var.location
-  target_resource_id  = azurerm_app_service_plan.serviceplan.id
+  target_resource_id  = azurerm_app_service_plan.main.id
 
   profile {
     name = "Scale on CPU usage"
@@ -57,13 +57,13 @@ resource "azurerm_monitor_autoscale_setting" "app_service_auto_scale" {
     capacity {
       default = var.default_autoscale_instances
       minimum = var.default_autoscale_instances
-      maximum = azurerm_app_service_plan.serviceplan.maximum_number_of_workers
+      maximum = azurerm_app_service_plan.main.maximum_number_of_workers
     }
 
     rule {
       metric_trigger {
         metric_name        = "CpuPercentage"
-        metric_resource_id = azurerm_app_service_plan.serviceplan.id
+        metric_resource_id = azurerm_app_service_plan.main.id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
@@ -83,7 +83,7 @@ resource "azurerm_monitor_autoscale_setting" "app_service_auto_scale" {
     rule {
       metric_trigger {
         metric_name        = "CpuPercentage"
-        metric_resource_id = azurerm_app_service_plan.serviceplan.id
+        metric_resource_id = azurerm_app_service_plan.main.id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
