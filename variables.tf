@@ -27,11 +27,6 @@ variable "sku_size" {
   default     = "S1"
 }
 
-variable "default_autoscale_instances" {
-  description = "Default numbers of instances which should stay in the auto scaling."
-  default     = 1
-}
-
 variable "min_tls_version" {
   description = "Minimum version of TLS the web app should support."
   default     = "1.2"
