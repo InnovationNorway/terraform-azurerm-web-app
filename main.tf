@@ -1,69 +1,85 @@
 resource "azurerm_app_service_plan" "serviceplan" {
-  name                = "${local.app_service_plan_name}"
-  location            = "${var.location}"
-  resource_group_name = "${var.resource_group_name}"
+  name                = local.app_service_plan_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   sku {
-    tier = "${var.sku_tier}"
-    size = "${var.sku_size}"
+    tier = var.sku_tier
+    size = var.sku_size
   }
 
-  tags = "${merge(var.tags, map("environment", var.environment), map("release", var.release))}"
+  tags = merge(
+    var.tags,
+    {
+      "environment" = var.environment
+    },
+    {
+      "release" = var.release
+    },
+  )
 }
 
 resource "azurerm_app_service" "webapp" {
-  name                    = "${local.web_app_name}"
-  location                = "${var.location}"
-  resource_group_name     = "${var.resource_group_name}"
-  app_service_plan_id     = "${azurerm_app_service_plan.serviceplan.id}"
+  name                    = local.web_app_name
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  app_service_plan_id     = azurerm_app_service_plan.serviceplan.id
   https_only              = true
   client_affinity_enabled = false
 
-  tags = "${merge(var.tags, map("environment", var.environment), map("release", var.release))}"
+  tags = merge(
+    var.tags,
+    {
+      "environment" = var.environment
+    },
+    {
+      "release" = var.release
+    },
+  )
 
   site_config {
     always_on       = true
     http2_enabled   = true
-    min_tls_version = "${var.min_tls_version}"
+    min_tls_version = var.min_tls_version
 
     ip_restriction {
-      ip_address  = "${var.restrict_ip}"
-      subnet_mask = "${var.restrict_subnet_mask}"
+      ip_address  = var.restrict_ip
+      subnet_mask = var.restrict_subnet_mask
     }
 
-    ftps_state = "${var.ftps_state}"
+    ftps_state = var.ftps_state
   }
 
   identity {
     type = "SystemAssigned"
   }
 
-  app_settings = "${var.app_settings}"
+  app_settings = var.app_settings
 
   lifecycle {
-    ignore_changes = ["app_settings"]
+    ignore_changes = [app_settings]
   }
 }
 
 resource "azurerm_monitor_autoscale_setting" "app_service_auto_scale" {
-  name                = "${local.autoscale_settings_name}"
-  resource_group_name = "${var.resource_group_name}"
-  location            = "${var.location}"
-  target_resource_id  = "${azurerm_app_service_plan.serviceplan.id}"
+  name                = local.autoscale_settings_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  target_resource_id  = azurerm_app_service_plan.serviceplan.id
 
   profile {
     name = "Scale on CPU usage"
 
     capacity {
-      default = "${var.default_autoscale_instances}"
-      minimum = "${var.default_autoscale_instances}"
-      maximum = "${azurerm_app_service_plan.serviceplan.maximum_number_of_workers}"
+      default = var.default_autoscale_instances
+      minimum = var.default_autoscale_instances
+      maximum = azurerm_app_service_plan.serviceplan.maximum_number_of_workers
     }
 
     rule {
       metric_trigger {
         metric_name        = "CpuPercentage"
-        metric_resource_id = "${azurerm_app_service_plan.serviceplan.id}"
+        metric_resource_id = azurerm_app_service_plan.serviceplan.id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
@@ -83,7 +99,7 @@ resource "azurerm_monitor_autoscale_setting" "app_service_auto_scale" {
     rule {
       metric_trigger {
         metric_name        = "CpuPercentage"
-        metric_resource_id = "${azurerm_app_service_plan.serviceplan.id}"
+        metric_resource_id = azurerm_app_service_plan.serviceplan.id
         time_grain         = "PT1M"
         statistic          = "Average"
         time_window        = "PT5M"
@@ -110,3 +126,4 @@ resource "azurerm_monitor_autoscale_setting" "app_service_auto_scale" {
     }
   }
 }
+
