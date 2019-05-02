@@ -1,5 +1,10 @@
+locals {
+  app_service_plan_id = coalesce(var.app_service_plan_id, azurerm_app_service_plan.main[0].id)
+}
+
 resource "azurerm_app_service_plan" "main" {
-  name                = local.app_service_plan_name
+  count               = var.app_service_plan_id == "" ? 1 : 0
+  name                = format("%s-plan", var.name)
   location            = var.location
   resource_group_name = var.resource_group_name
 
@@ -15,7 +20,7 @@ resource "azurerm_app_service" "main" {
   name                    = local.name
   location                = var.location
   resource_group_name     = var.resource_group_name
-  app_service_plan_id     = azurerm_app_service_plan.main.id
+  app_service_plan_id     = local.app_service_plan_id
   https_only              = true
   client_affinity_enabled = false
 

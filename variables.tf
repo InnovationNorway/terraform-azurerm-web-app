@@ -11,6 +11,12 @@ variable "name" {
   description = "The name for the web app."
 }
 
+variable "app_service_plan_id" {
+  type        = string
+  default     = ""
+  description = "The ID of an existing app service plan to use for the web app."
+}
+
 variable "sku_tier" {
   description = "Which tier the app service plan will have."
   default     = "Standard"

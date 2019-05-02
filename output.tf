@@ -13,14 +13,9 @@ output "webapp_name" {
   value       = azurerm_app_service.main.name
 }
 
-output "webapp_serviceplan_name" {
-  description = "The name of the created web app service plan."
-  value       = azurerm_app_service_plan.main.name
-}
-
 output "webapp_serviceplan_id" {
   description = "The id of the created web app service plan."
-  value       = azurerm_app_service_plan.main.id
+  value       = local.app_service_plan_id
 }
 
 output "hostname" {
