@@ -53,3 +53,10 @@ resource "azurerm_app_service" "main" {
 
   app_settings = var.app_settings
 }
+
+resource "azurerm_app_service_custom_hostname_binding" "main" {
+  count               = length(var.custom_hostnames)
+  hostname            = var.custom_hostnames[count.index]
+  app_service_name    = azurerm_app_service.main.name
+  resource_group_name = data.azurerm_resource_group.main.name
+}
