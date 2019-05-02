@@ -3,7 +3,7 @@ variable "resource_group_name" {
 }
 
 variable "location" {
-  default     = "westeurope"
+  default     = ""
   description = "The azure datacenter location where the resources should be created."
 }
 
