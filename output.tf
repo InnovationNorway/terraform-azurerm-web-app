@@ -23,7 +23,12 @@ output "hostname" {
   value       = azurerm_app_service.main.default_site_hostname
 }
 
-output "outbound_ip_addresses" {
-  value = azurerm_app_service.main.outbound_ip_addresses
+output "outbound_ips" {
+  value = split(",", azurerm_app_service.main.outbound_ip_addresses)
+  description = "A list of outbound IP addresses for the web app."
 }
 
+output "possible_outbound_ips" {
+  value = split(",", azurerm_app_service.main.possible_outbound_ip_addresses)
+  description = "A list of possible outbound IP addresses for the web app. Superset of outbound_ips."
+}
