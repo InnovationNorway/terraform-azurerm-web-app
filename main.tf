@@ -3,14 +3,14 @@ data "azurerm_resource_group" "main" {
 }
 
 resource "azurerm_app_service_plan" "main" {
-  count               = var.app_service_plan_id == "" ? 1 : 0
-  name                = format("%s-plan", var.name)
+  count               = local.plan.id == "" ? 1 : 0
+  name                = coalesce(local.plan.name, local.default_plan_name)
   location            = local.location
   resource_group_name = data.azurerm_resource_group.main.name
 
   sku {
-    tier = split("_", var.sku)[0]
-    size = split("_", var.sku)[1]
+    tier = local.sku_tiers[local.plan.sku_size]
+    size = local.plan.sku_size
   }
 
   tags = var.tags
@@ -20,7 +20,7 @@ resource "azurerm_app_service" "main" {
   name                    = var.name
   location                = local.location
   resource_group_name     = data.azurerm_resource_group.main.name
-  app_service_plan_id     = local.app_service_plan_id
+  app_service_plan_id     = local.plan_id
   https_only              = true
   client_affinity_enabled = false
 

@@ -11,12 +11,6 @@ variable "name" {
   description = "The name for the web app."
 }
 
-variable "app_service_plan_id" {
-  type        = string
-  default     = ""
-  description = "The ID of an existing app service plan to use for the web app."
-}
-
 variable "sku" {
   type        = string
   default     = "Basic_B1"
@@ -64,6 +58,12 @@ variable "custom_hostnames" {
   description = "List of custom hostnames to use for the web app."
 }
 
+variable "plan" {
+  type        = map(string)
+  default     = {}
+  description = "A map of app service plan properties."
+}
+
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)
@@ -73,8 +73,6 @@ variable "tags" {
 }
 
 locals {
-  app_service_plan_id = coalesce(var.app_service_plan_id, azurerm_app_service_plan.main[0].id)
-
   ip_restrictions = [
     for prefix in var.ip_restrictions : {
       ip_address  = split("/", prefix)[0]
@@ -95,4 +93,36 @@ locals {
     for secret in azurerm_key_vault_secret.main :
     replace(secret.name, "-", "_") => format("@Microsoft.KeyVault(SecretUri=%s)", secret.id)
   }
+
+  default_plan_name = format("%s-plan", var.name)
+
+  plan = merge({
+    id       = ""
+    name     = ""
+    sku_size = "B1"
+  }, var.plan)
+
+  plan_id = coalesce(local.plan.id, azurerm_app_service_plan.main[0].id)
+
+  skus = {
+    "Free"             = ["F1", "Free"]
+    "Shared"           = ["D1", "Shared"]
+    "Basic"            = ["B1", "B2", "B3"]
+    "Standard"         = ["S1", "S2", "S3"]
+    "Premium"          = ["P1", "P2", "P3"]
+    "PremiumV2"        = ["P1v2", "P2v2", "P3v2"]
+    "PremiumContainer" = ["PC2", "PC3", "PC4"]
+    "ElasticPremium"   = ["EP1", "EP2", "EP3"]
+  }
+
+  flattened_skus = flatten([
+    for tier, sizes in local.skus : [
+      for size in sizes : {
+        tier = tier
+        size = size
+      }
+    ]
+  ])
+
+  sku_tiers = { for sku in local.flattened_skus : sku.size => sku.tier }
 }

@@ -13,9 +13,9 @@ output "webapp_name" {
   value       = azurerm_app_service.main.name
 }
 
-output "webapp_serviceplan_id" {
-  description = "The id of the created web app service plan."
-  value       = local.app_service_plan_id
+output "plan_id" {
+  description = "The id of the app service plan."
+  value       = local.plan_id
 }
 
 output "hostname" {
@@ -24,11 +24,11 @@ output "hostname" {
 }
 
 output "outbound_ips" {
-  value = split(",", azurerm_app_service.main.outbound_ip_addresses)
+  value       = split(",", azurerm_app_service.main.outbound_ip_addresses)
   description = "A list of outbound IP addresses for the web app."
 }
 
 output "possible_outbound_ips" {
-  value = split(",", azurerm_app_service.main.possible_outbound_ip_addresses)
+  value       = split(",", azurerm_app_service.main.possible_outbound_ip_addresses)
   description = "A list of possible outbound IP addresses for the web app. Superset of outbound_ips."
 }
