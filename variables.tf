@@ -64,6 +64,18 @@ variable "plan" {
   description = "A map of app service plan properties."
 }
 
+variable "runtime" {
+  type = object({
+    name    = string
+    version = string
+  })
+  default = {
+    name    = "node"
+    version = "lts"
+  }
+  description = "A map of web app runtime properties."
+}
+
 variable "tags" {
   description = "A map of tags to add to all resources"
   type        = map(string)
@@ -100,9 +112,38 @@ locals {
     id       = ""
     name     = ""
     sku_size = "B1"
+    os_type  = "Linux"
   }, var.plan)
 
   plan_id = coalesce(local.plan.id, azurerm_app_service_plan.main[0].id)
+
+  os_type = lower(local.plan.os_type)
+
+  supported_os_types = {
+    windows = true
+    linux   = true
+  }
+  check_supported_os_type = local.supported_os_types[local.os_type]
+
+  linux_fx_version = format("%s|%s", var.runtime.name, var.runtime.version)
+
+  supported_runtime_versions = {
+    windows = {
+      aspnet = ["3.5", "4.7"]
+      node   = ["4.4", "4.5", "6.2", "6.6", "6.9", "6.11", "8.0", "8.1", "8.9", "8.11", "10.1", "10.10", "10.14"]
+      python = ["3.7", "3.6", "2.7"]
+    }
+    linux = {
+      dotnetcore = ["1.0", "1.1", "2.1", "2.2"]
+      ruby       = ["2.3.8", "2.4.5", "2.5.5", "2.6.2"]
+    }
+  }
+
+  container_runtimes = {
+    node   = "mcr.microsoft.com/azure-functions/node:2.0-node8-appservice"
+    dotnet = "mcr.microsoft.com/azure-functions/dotnet:2.0-appservice"
+    python = "mcr.microsoft.com/azure-functions/python:2.0-python3.6-appservice"
+  }
 
   skus = {
     "Free"             = ["F1", "Free"]
