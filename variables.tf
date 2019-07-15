@@ -46,6 +46,18 @@ variable "app_settings" {
   description = "Application settings to insert on creating the function app. Following updates will be ignored, and has to be set manually. Updates done on application deploy or in portal will not affect terraform state file."
 }
 
+variable "secure_app_settings" {
+  type        = map(string)
+  default     = {}
+  description = "Set sensitive app settings. Uses Key Vault references as values for app settings."
+}
+
+variable "key_vault_id" {
+  type        = string
+  default     = ""
+  description = "The ID of an existing Key Vault. Required if `secure_app_settings` is set."
+}
+
 variable "custom_hostnames" {
   type        = list(string)
   default     = []
