@@ -21,8 +21,6 @@ locals {
     for secret in azurerm_key_vault_secret.main :
     replace(secret.name, "-", "_") => format("@Microsoft.KeyVault(SecretUri=%s)", secret.id)
   }
-
-  depends_on = [azurerm_key_vault_secret.main]
 }
 
 data "azurerm_resource_group" "main" {
@@ -66,6 +64,8 @@ resource "azurerm_app_service" "main" {
   }
 
   app_settings = merge(var.app_settings, local.secure_app_settings)
+
+  depends_on = [azurerm_key_vault_secret.main]
 }
 
 resource "azurerm_app_service_custom_hostname_binding" "main" {
