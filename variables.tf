@@ -71,3 +71,28 @@ variable "tags" {
   default = {
   }
 }
+
+locals {
+  app_service_plan_id = coalesce(var.app_service_plan_id, azurerm_app_service_plan.main[0].id)
+
+  ip_restrictions = [
+    for prefix in var.ip_restrictions : {
+      ip_address  = split("/", prefix)[0]
+      subnet_mask = cidrnetmask(prefix)
+    }
+  ]
+
+  location = coalesce(var.location, data.azurerm_resource_group.main.location)
+
+  key_vault_secrets = [
+    for name, value in var.secure_app_settings : {
+      name  = replace(name, "/[^a-zA-Z0-9-]/", "-")
+      value = value
+    }
+  ]
+
+  secure_app_settings = {
+    for secret in azurerm_key_vault_secret.main :
+    replace(secret.name, "-", "_") => format("@Microsoft.KeyVault(SecretUri=%s)", secret.id)
+  }
+}
