@@ -110,7 +110,6 @@ The `plan` object accepts the following keys:
 | `id` | `string` | The ID of an existing app service plan. |
 | `name` | `string` | The name of a new app service plan. |
 | `sku_size` | `string` | The SKU size of a new app service plan. The options are: `B1` (Basic Small), `B2` (Basic Medium), `B3` (Basic Large), `S1` (Standard Small), `S2` (Standard Medium), `S3` (Standard Large), `P1v2` (PremiumV2 Small), `P2v2` (PremiumV2 Medium), `P3v2` (PremiumV2 Large). Default: `B1`. |
-| `os_type` | `string` | The operating system type. The options are: `linux`, `windows`. |
 
 The `runtime` object must have the following keys:
 
