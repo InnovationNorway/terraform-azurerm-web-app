@@ -129,7 +129,7 @@ locals {
   plan = merge({
     id       = ""
     name     = ""
-    sku_size = "B1"
+    sku_size = "F1"
     os_type  = "linux"
   }, var.plan)
 
@@ -211,11 +211,10 @@ locals {
   sku_tiers = { for sku in local.flattened_skus : sku.size => sku.tier }
 
   scaling = merge({
-    enabled   = false
     min_count = 1
-    max_count = 3
+    max_count = null
     rules     = []
   }, var.scaling)
 
-  client_affinity_enabled = local.scaling.enabled ? true : false
+  client_affinity_enabled = local.scaling.max_count != null ? true : false
 }
