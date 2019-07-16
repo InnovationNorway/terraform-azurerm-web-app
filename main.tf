@@ -36,7 +36,8 @@ resource "azurerm_app_service" "main" {
     ftps_state      = var.ftps_state
 
     dotnet_framework_version = (
-      var.runtime.name == "aspnet" ? var.runtime.version : null
+      var.runtime.name == "aspnet" ?
+      local.dotnet_clr_versions[var.runtime.version] : null
     )
 
     php_version = (
@@ -50,7 +51,8 @@ resource "azurerm_app_service" "main" {
     )
 
     linux_fx_version = (
-      local.os_type == "linux" ? local.linux_fx_version : null
+      local.os_type == "linux" ?
+      format("%s|%s", upper(var.runtime.name), var.runtime.version) : null
     )
   }
 

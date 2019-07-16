@@ -112,37 +112,47 @@ locals {
     id       = ""
     name     = ""
     sku_size = "B1"
-    os_type  = "Linux"
+    os_type  = "linux"
   }, var.plan)
 
   plan_id = coalesce(local.plan.id, azurerm_app_service_plan.main[0].id)
 
-  os_type = lower(local.plan.os_type)
+  os_type = lower(var.runtime.name) == "aspnet" ? "windows" : local.plan.os_type
 
-  supported_os_types = {
-    windows = true
-    linux   = true
-  }
-  check_supported_os_type = local.supported_os_types[local.os_type]
-
-  linux_fx_version = format("%s|%s", var.runtime.name, var.runtime.version)
-
-  supported_runtime_versions = {
+  runtime_versions = {
     windows = {
       aspnet = ["3.5", "4.7"]
-      node   = ["4.4", "4.5", "6.2", "6.6", "6.9", "6.11", "8.0", "8.1", "8.9", "8.11", "10.1", "10.10", "10.14"]
-      python = ["3.7", "3.6", "2.7"]
+      node   = ["10.6", "10.0"]
+      php    = ["7.3", "7.2"]
+      python = ["2.7", "3.6"]
+      java   = ["11", "1.8"]
     }
     linux = {
-      dotnetcore = ["1.0", "1.1", "2.1", "2.2"]
-      ruby       = ["2.3.8", "2.4.5", "2.5.5", "2.6.2"]
+      ruby       = ["2.6.2", "2.5.2"]
+      node       = ["10.14", "lts"]
+      php        = ["7.3", "7.2"]
+      dotnetcore = ["2.2", "2.1"]
+      java       = ["11-java11", "8-jre"]
+      tomcat     = ["9.0-java11", "8.5-java11"]
+      wildfly    = ["14-jre8"]
+      python     = ["3.7", "3.6", "2.7"]
     }
   }
+  supported_runtimes = {
+    for os_type, runtime in local.runtime_versions :
+    os_type => {
+      for name, versions in runtime :
+      name => {
+        for version in versions :
+        version => true
+      }
+    }
+  }
+  check_supported_runtimes = local.supported_runtimes[lower(local.plan.os_type)][lower(var.runtime.name)][var.runtime.version]
 
-  container_runtimes = {
-    node   = "mcr.microsoft.com/azure-functions/node:2.0-node8-appservice"
-    dotnet = "mcr.microsoft.com/azure-functions/dotnet:2.0-appservice"
-    python = "mcr.microsoft.com/azure-functions/python:2.0-python3.6-appservice"
+  dotnet_clr_versions = {
+    "3.5" = "v2.0"
+    "4.7" = "v4.0"
   }
 
   skus = {
