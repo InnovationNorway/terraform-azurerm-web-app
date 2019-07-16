@@ -46,6 +46,18 @@ variable "secure_app_settings" {
   description = "Set sensitive app settings. Uses Key Vault references as values for app settings."
 }
 
+variable "scaling" {
+  type = any
+  # type = object({
+  #   enable    = bool
+  #   min_count = number
+  #   max_count = number 
+  #   rules     = list 
+  # })
+  default     = {}
+  description = "A `scaling` object."
+}
+
 variable "key_vault_id" {
   type        = string
   default     = ""
@@ -196,4 +208,11 @@ locals {
   ])
 
   sku_tiers = { for sku in local.flattened_skus : sku.size => sku.tier }
+
+  scaling = merge({
+    enabled   = false
+    min_count = 1
+    max_count = 3
+    rules     = []
+  }, var.scaling)
 }
