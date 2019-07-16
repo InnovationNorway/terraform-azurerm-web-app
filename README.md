@@ -96,6 +96,7 @@ module "web_app" {
 | --- | --- | --- |
 | `name` | `string` | The name of the web app. |
 | `resource_group_name` | `string` | The name of an existing resource group to use for the web app. |
+| `runtime` | `object` | The web app runtime. |
 | `app_settings` | `map` | A map of App Setttings for the web app. |
 | `secure_app_settings` | `map` | Set sensitive app settings. Uses Key Vault references as values for app settings. |
 | `plan` | `map` | A map of app service plan properties. |
