@@ -24,7 +24,7 @@ resource "azurerm_app_service" "main" {
   resource_group_name     = data.azurerm_resource_group.main.name
   app_service_plan_id     = local.plan_id
   https_only              = true
-  client_affinity_enabled = false
+  client_affinity_enabled = local.client_affinity_enabled
 
   tags = var.tags
 

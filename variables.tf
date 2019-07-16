@@ -217,4 +217,6 @@ locals {
     max_count = 3
     rules     = []
   }, var.scaling)
+
+  client_affinity_enabled = local.scaling.enabled ? true : false
 }
