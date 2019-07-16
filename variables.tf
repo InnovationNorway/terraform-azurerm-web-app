@@ -101,7 +101,9 @@ locals {
 
   always_on = local.is_shared_plan ? false : true
 
-  use_32_bit_worker_process = local.is_shared_plan ? true : false
+  use_32_bit_worker_process = (
+    local.is_shared_plan && local.os_type == "windows" ? true : false
+  )
 
   ip_restrictions = [
     for prefix in var.ip_restrictions : {
