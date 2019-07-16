@@ -140,21 +140,22 @@ locals {
 
   os_type = local.runtime_name == "aspnet" ? "windows" : lower(local.plan.os_type)
 
+  # FIXME: create a data source to get supported runtimes
   runtime_versions = {
     windows = {
       aspnet = ["3.5", "4.7"]
-      node   = ["10.6", "10.0"]
-      php    = ["7.3", "7.2"]
+      node   = ["10.6", "10.0", "8.11", "8.10", "8.9", "8.5", "8.4", "8.1", "7.10", "6.12", "6.9", "6.5", "4.8", "0.12", "0.10", "0.8", "0.6"]
+      php    = ["7.3", "7.2", "7.1", "7.0", "5.6"]
       python = ["2.7", "3.6"]
-      java   = ["11", "1.8"]
+      java   = ["11", "1.8", "1.7"]
     }
     linux = {
-      ruby       = ["2.6.2", "2.5.2"]
-      node       = ["10.14", "lts"]
-      php        = ["7.3", "7.2"]
-      dotnetcore = ["2.2", "2.1"]
+      ruby       = ["2.6.2", "2.5.5", "2.4.5", "2.3.8"]
+      node       = ["lts", "10.14", "10.12", "10.10", "10.1", "9.4", "8.12", "8.11", "8.9", "8.8", "8.2", "8.1", "8.0", "6.11", "6.10", "6.9", "6.6", "6.2", "4.8", "4.5", "4.4"]
+      php        = ["7.3", "7.2", "7.0", "5.6"]
+      dotnetcore = ["2.2", "2.1", "2.0", "1.1", "1.0"]
       java       = ["11-java11", "8-jre"]
-      tomcat     = ["9.0-java11", "8.5-java11"]
+      tomcat     = ["9.0-java11", "8.5-java11", "9.0-jre8", "8.5-jre8"]
       wildfly    = ["14-jre8"]
       python     = ["3.7", "3.6", "2.7"]
     }
@@ -187,6 +188,7 @@ locals {
     } : {}
   )
 
+  # FIXME: create a data source to get available SKUs
   skus = {
     "Free"             = ["F1", "Free"]
     "Shared"           = ["D1", "Shared"]
