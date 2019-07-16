@@ -85,6 +85,13 @@ variable "tags" {
 }
 
 locals {
+  always_on = (
+    contains(
+      ["F1", "FREE", "D1", "SHARED", "B1", "B2", "B3", "BASIC"],
+      upper(local.plan.sku_size)
+    ) ? false : true
+  )
+
   ip_restrictions = [
     for prefix in var.ip_restrictions : {
       ip_address  = split("/", prefix)[0]

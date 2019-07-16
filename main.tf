@@ -29,7 +29,7 @@ resource "azurerm_app_service" "main" {
   tags = var.tags
 
   site_config {
-    always_on       = true
+    always_on       = local.always_on
     http2_enabled   = true
     min_tls_version = var.min_tls_version
     ip_restriction  = local.ip_restrictions
@@ -61,8 +61,8 @@ resource "azurerm_app_service" "main" {
   }
 
   app_settings = merge(
-    var.app_settings, 
-    local.secure_app_settings, 
+    var.app_settings,
+    local.secure_app_settings,
     local.node_default_version
   )
 
