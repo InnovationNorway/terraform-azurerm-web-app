@@ -124,7 +124,6 @@ The `scaling` object accepts the following keys:
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `enabled` | `bool` | Whether scaling is enabled or not. |
 | `min_count` | `number` | The minimum number of instances. Default: `1`. |
 | `max_count` | `number` | The maximum number of instances. Default: `3`.  |
 | `rules` | `list` | List of `rules` objects. |
