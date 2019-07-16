@@ -35,6 +35,8 @@ resource "azurerm_app_service" "main" {
     ip_restriction  = local.ip_restrictions
     ftps_state      = var.ftps_state
 
+    use_32_bit_worker_process = local.use_32_bit_worker_process
+
     dotnet_framework_version = (
       var.runtime.name == "aspnet" ?
       local.dotnet_clr_versions[var.runtime.version] : null

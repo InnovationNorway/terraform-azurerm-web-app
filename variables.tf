@@ -97,12 +97,11 @@ variable "tags" {
 }
 
 locals {
-  always_on = (
-    contains(
-      ["F1", "FREE", "D1", "SHARED", "B1", "B2", "B3", "BASIC"],
-      upper(local.plan.sku_size)
-    ) ? false : true
-  )
+  is_shared_plan = contains(["F1", "FREE", "D1", "SHARED"], upper(local.plan.sku_size))
+
+  always_on = local.is_shared_plan ? false : true
+
+  use_32_bit_worker_process = local.is_shared_plan ? true : false
 
   ip_restrictions = [
     for prefix in var.ip_restrictions : {
