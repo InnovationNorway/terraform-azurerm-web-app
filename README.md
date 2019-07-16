@@ -4,7 +4,7 @@ Create Web App (App Service) in Azure.
 
 ## Example Usage
 
-### Set runtime
+### Runtime
 
 ```hcl
 resource "azurerm_resource_group" "example" {
@@ -18,7 +18,6 @@ module "web_app" {
   name = "example"
 
   resource_group_name = azurerm_resource_group.example.name
-
 
   runtime = {
     name    = "dotnetcore"
@@ -50,7 +49,7 @@ module "web_app" {
 }
 ```
 
-### Configure IP restrictions
+### Access Restrictions (Restrict IPs)
 
 ```hcl
 resource "azurerm_resource_group" "example" {
@@ -69,7 +68,7 @@ module "web_app" {
 }
 ```
 
-### Enable scaling
+### Scaling
 
 ```hcl
 resource "azurerm_resource_group" "example" {
@@ -128,4 +127,4 @@ The `scaling` object accepts the following keys:
 | `enabled` | `bool` | Whether scaling is enabled or not. |
 | `min_count` | `number` | The minimum number of instances. Default: `1`. |
 | `max_count` | `number` | The maximum number of instances. Default: `3`.  |
-| `rules` | `list` | List of autoscale rules. This should be `scaling` objects. |
+| `rules` | `list` | List of scaling rules. This should be `scaling` objects. |
