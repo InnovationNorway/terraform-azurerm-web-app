@@ -1,99 +1,131 @@
-# terraform-azurerm-Web-app
+# Web App (Azure App Service)
 
-## Create a Web App in Azure
+Create Web App (App Service) in Azure.
 
-This terraform module deploys a Web App on dedicated app service plan, with autoscaling, in Azure. 
+## Example Usage
 
-The following resources will be created by the module:
-- App service plan (S1)
-- Web app
-- Auto scale settings for app service plan. 
-
-
-## Usage
+### Set runtime
 
 ```hcl
-
-resource "azurerm_resource_group" "image_resizer" {
-  name     = "image-resizer-func-rg"
+resource "azurerm_resource_group" "example" {
+  name     = "example-resources"
   location = "westeurope"
 }
 
-module "Web_app" {
-  source                    = "innovationnorway/web-app/azurerm"
-  version                   = "0.1.0-pre"
-  web_app_name              = "image-resizer-web"
-  resource_group_name       = "${azurerm_resource_group.image_resizer.name}"
-  location                  = "${azurerm_resource_group.image_resizer.location}"
-  environment               = "lab"
-  release                   = "release 2018-07-21.001"
-  restrict_ip               = "1.2.3.4"
-  restrict_subnet_mask      = "255.255.255.0"
-  
-  app_settings {
-  }
+module "web_app" {
+  source = "innovationnorway/web-app/azurerm"
 
-  tags {
-      a       = "b",
-      project = "image-resizing"
+  name = "example"
+
+  resource_group_name = azurerm_resource_group.example.name
+
+
+  runtime = {
+    name    = "dotnetcore"
+    version = "2.1"
   }
 }
-
 ```
 
-## Inputs
+### Source Application Settings from Key Vault
 
-### resource_group_name
-The resource group where the resources should be created.
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "example-resources"
+  location = "westeurope"
+}
 
-### location
-The azure datacenter location where the resources should be created. Defaults to "westeurope"
+module "web_app" {
+  source = "innovationnorway/web-app/azurerm"
 
-### web_app_name
-The name for the Web app. Without environment naming.
+  name = "example"
 
-### min_tls_version
-Minimum version of TLS the web app should support.
+  resource_group_name = azurerm_resource_group.example.name
 
-### restrict_ip
-The ipv4 address you want to allow accessing the web app
+  key_vault_id = azurerm_key_vault.example.id
 
-### restrict_subnet_mask
-The subnet mask for the ipv4 address you want to allow accessing the web app, defaults to 0.0.0.0 (every ip allowed)
+  secure_app_settings = {
+    MESSAGE = "Hello World!"
+  }
+}
+```
 
-### ftps_state
-Which form for ftp the web app file system should support. If not strictly nesasery to use it, leave it disabled, and onlyftps if needed.
+### Configure IP restrictions
 
-### app_settings
-Application settings to insert on creating the Web app. Following updates will be ignored, and has to be set manually. Updates done on application deploy or in portal will not affect terraform state file.
- 
-### tags
-A map of tags to add to all resources. Release and Environment will be auto tagged. 
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "example-resources"
+  location = "westeurope"
+}
 
-### environment
-The environment where the infrastructure is deployed.
+module "web_app" {
+  source = "innovationnorway/web-app/azurerm"
 
-### release
-The release the deploy is based on
+  name = "example"
+
+  resource_group_name = azurerm_resource_group.example.name
+
+  ip_restrictions = ["192.168.3.4/32", "192.168.2.0/24"]
+}
+```
+
+### Enable scaling
+
+```hcl
+resource "azurerm_resource_group" "example" {
+  name     = "example-resources"
+  location = "westeurope"
+}
+
+module "web_app" {
+  source = "innovationnorway/web-app/azurerm"
+
+  name = "example"
+
+  resource_group_name = azurerm_resource_group.example.name
+
+  scaling = {
+    min_count = 1
+    max_count = 3
+  }
+}
+```
+
+## Arguments
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The name of the web app. |
+| `resource_group_name` | `string` | The name of an existing resource group to use for the web app. |
+| `app_settings` | `map` | A map of App Setttings for the web app. |
+| `secure_app_settings` | `map` | Set sensitive app settings. Uses Key Vault references as values for app settings. |
+| `plan` | `map` | A map of app service plan properties. |
+| `key_vault_id` | `string` | The ID of an existing Key Vault. Required if `secure_app_settings` is set. |
+| `ip_restrictions` | `list` | A list of IP addresses in CIDR format specifying Access Restrictions. |
+| `tags` | `map` | A mapping of tags to assign to the web app. |
+
+The `plan` object accepts the following keys:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `id` | `string` | The ID of an existing app service plan. |
+| `name` | `string` | The name of a new app service plan. |
+| `sku_size` | `string` | The SKU size of a new app service plan. The options are: `B1` (Basic Small), `B2` (Basic Medium), `B3` (Basic Large), `S1` (Standard Small), `S2` (Standard Medium), `S3` (Standard Large), `P1v2` (PremiumV2 Small), `P2v2` (PremiumV2 Medium), `P3v2` (PremiumV2 Large). Default: `B1`. |
+| `os_type` | `string` | The operating system type. The options are: `linux`, `windows`. |
+
+The `runtime` object must have the following keys:
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The name of the runtime. The options are: `aspnet`, `dotnetcore`, `node`, `python`, `ruby`, `php`, `java`, `tomcat`, `wildfly`. Default: `node`. |
+| `version` | `string` | The version of the runtime. |
 
 
+The `scaling` object accepts the following keys:
 
-## Outputs
-
-### identity_principal_id
-The MSI identities set on the web app. Returns a list of identities.
-
-### identity_tenant_id
-The MSI identity tenant id set on the web app.
-
-### webapp_name
-The name of the created web app.
-
-### webapp_serviceplan_name
-The name of the created web app service plan.
-
-### webapp_serviceplan_id
-The id of the created web app service plan.
-
-### hostname
-The Hostname associated with the Web App - such as mysite.azurewebsites.net.
+| Name | Type | Description |
+| --- | --- | --- |
+| `enabled` | `bool` | Whether scaling is enabled or not. |
+| `min_count` | `number` | The minimum number of instances. Default: `1`. |
+| `max_count` | `number` | The maximum number of instances. Default: `3`.  |
+| `rules` | `list` | List of autoscale rules. This should be `scaling` objects. |
