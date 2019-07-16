@@ -60,7 +60,11 @@ resource "azurerm_app_service" "main" {
     type = "SystemAssigned"
   }
 
-  app_settings = merge(var.app_settings, local.secure_app_settings)
+  app_settings = merge(
+    var.app_settings, 
+    local.secure_app_settings, 
+    local.node_default_version
+  )
 
   depends_on = [azurerm_key_vault_secret.main]
 }

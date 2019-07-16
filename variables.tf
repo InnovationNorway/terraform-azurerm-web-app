@@ -117,7 +117,9 @@ locals {
 
   plan_id = coalesce(local.plan.id, azurerm_app_service_plan.main[0].id)
 
-  os_type = lower(var.runtime.name) == "aspnet" ? "windows" : local.plan.os_type
+  runtime_name = lower(var.runtime.name)
+
+  os_type = local.runtime_name == "aspnet" ? "windows" : lower(local.plan.os_type)
 
   runtime_versions = {
     windows = {
@@ -148,12 +150,23 @@ locals {
       }
     }
   }
-  check_supported_runtimes = local.supported_runtimes[lower(local.plan.os_type)][lower(var.runtime.name)][var.runtime.version]
+  check_supported_runtimes = (
+    local.supported_runtimes[local.os_type][local.runtime_name][var.runtime.version]
+  )
 
   dotnet_clr_versions = {
     "3.5" = "v2.0"
     "4.7" = "v4.0"
   }
+
+  node_default_version = (
+    local.os_type == "windows" ?
+    {
+      WEBSITE_NODE_DEFAULT_VERSION = (
+        local.runtime_name == "node" ? var.runtime.version : "8.11.1"
+      )
+    } : null
+  )
 
   skus = {
     "Free"             = ["F1", "Free"]
