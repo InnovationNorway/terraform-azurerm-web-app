@@ -172,7 +172,7 @@ locals {
       WEBSITE_NODE_DEFAULT_VERSION = (
         local.runtime_name == "node" ? var.runtime.version : "8.11.1"
       )
-    } : null
+    } : {}
   )
 
   skus = {
