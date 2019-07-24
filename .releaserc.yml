@@ -1,0 +1,1 @@
+extends: "@innovationnorway/semantic-release-terraform-config"
