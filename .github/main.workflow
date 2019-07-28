@@ -1,11 +1,11 @@
 workflow "Terraform" {
-  on = "push"
-  resolves = ["terraform-fmt"]
+  on = "pull_request"
+  resolves = ["terraform-validate"]
 }
 
-action "terraform-fmt" {
-  uses = "innovationnorway/terraform-action@master"
-  args = ["fmt", "-check", "-list", "-recursive"]
+action "terraform-validate" {
+  uses = "innovationnorway/terraform-action/validate@master"
+  secrets = ["GITHUB_TOKEN"]
 }
 
 workflow "Release" {
