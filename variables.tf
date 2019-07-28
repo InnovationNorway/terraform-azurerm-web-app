@@ -121,7 +121,7 @@ locals {
     version = ""
   }, var.runtime)
 
-  runtime_name = lower(var.runtime.name)
+  runtime_name = lower(local.runtime.name)
 
   # FIXME: create a data source to get list of supported runtimes and SKUs
   runtime_versions = {
@@ -195,7 +195,7 @@ locals {
 
   always_on = local.is_shared ? false : true
 
-  use_32_bit_worker_process = local.is_shared && local.os_type == "windows" ? true : false
+  use_32_bit_worker_process = local.is_shared ? true : false
 
   dotnet_clr_versions = {
     "3.5" = "v2.0"
@@ -207,7 +207,7 @@ locals {
 
   python_version = local.os_type == "windows" && local.runtime_name == "python" ? local.runtime_version : null
 
-  linux_fx_version = local.os_type == "linux" ? format("%s|%s", upper(var.runtime.name), local.runtime_version) : null
+  linux_fx_version = local.os_type == "linux" ? format("%s|%s", upper(local.runtime.name), local.runtime_version) : null
 
   node_default_version = local.os_type == "windows" ? {
     WEBSITE_NODE_DEFAULT_VERSION = local.runtime_name == "node" ? local.runtime_version : "8.11.1"
