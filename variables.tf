@@ -98,6 +98,12 @@ variable "scaling" {
   description = "Autoscale settings for the web app. This should be `scaling` object."
 }
 
+variable "storage_mounts" {
+  type        = any
+  default     = []
+  description = "List of storage mounts."
+}
+
 variable "tags" {
   type        = map(string)
   default     = {}
@@ -339,4 +345,15 @@ locals {
   ]
 
   client_affinity_enabled = local.scaling.enabled ? true : false
+
+  storage_mounts = [
+    for s in var.storage_mounts : merge({
+      name           = ""
+      account_name   = ""
+      access_key     = ""
+      share_name     = ""
+      container_name = ""
+      mount_path     = ""
+    }, s)
+  ]
 }

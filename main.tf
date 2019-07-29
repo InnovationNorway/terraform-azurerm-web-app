@@ -90,6 +90,20 @@ resource "azurerm_app_service" "main" {
     }
   }
 
+  dynamic "storage_account" {
+    for_each = local.storage_mounts
+    iterator = s
+
+     content {
+      name         = s.value.name
+      type         = s.value.share_name != "" ? "AzureFiles" : "AzureBlob"
+      account_name = s.value.account_name
+      share_name   = s.value.share_name != "" ? s.value.share_name : s.value.container_name
+      access_key   = s.value.access_key
+      mount_path   = s.value.mount_path
+    }
+  }
+
   tags = var.tags
 
   depends_on = [azurerm_key_vault_secret.main]

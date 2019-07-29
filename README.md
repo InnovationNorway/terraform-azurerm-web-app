@@ -108,6 +108,7 @@ module "web_app" {
 | `custom_hostnames` | `list` | List of custom hostnames to use for the web app. |
 | `auth` | `object` | Auth settings for the web app. This should be `auth` object. |
 | `identity` | `object` | Managed service identity properties. This should be `identity` object. |
+| `storage_mounts` | `list` | List of storage mounts for the web app. |
 | `tags` | `map` | A mapping of tags to assign to the web app. |
 
 The `runtime` object accepts the following keys:
@@ -174,3 +175,13 @@ The `rules` object accepts the following keys:
 | `scale` | `string` | **Required**. The direction and amount to scale. |
 | `cooldown` | `number` | The number of minutes that must elapse before another scaling event can occur. Default: `5`. |
 | `time_grain` | `string` | The way metrics are polled across instances. Default: `avg 1m`. |
+
+The `storage_mounts` object accepts the following keys:
+
+ | Name | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | The identifier of the storage mount. |
+| `account_name` | `string` | The name of the storage account. |
+| `share_name` | `string` | The name of the file share.  |
+| `container_name` | `string` | The name of the blob container. Either this or `share_name` should be specified, but not both. |
+| `mount_path` | `string` | The path to mount the storage within the web app. |
