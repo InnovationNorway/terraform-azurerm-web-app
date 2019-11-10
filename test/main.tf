@@ -4,7 +4,7 @@ resource "random_id" "test" {
 
 resource "azurerm_resource_group" "test" {
   name     = format("test-%s", random_id.test.hex)
-  location = "westeurope"
+  location = "southindia"
 }
 
 module "web_app" {
@@ -15,12 +15,12 @@ module "web_app" {
   resource_group_name = azurerm_resource_group.test.name
 
   runtime = {
-    name    = "dotnetcore"
-    version = "2.2"
+    name    = "ASP.NET"
+    version = "4.7"
   }
 
   plan = {
-    sku_size = "S1"
+    sku_size = "D1"
   }
 }
 
