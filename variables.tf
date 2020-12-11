@@ -63,7 +63,7 @@ variable "ip_restrictions" {
 }
 
 variable "custom_hostnames" {
-  type        = list(string)
+  type        = list(any)
   default     = []
   description = "List of custom hostnames to use for the web app."
 }
