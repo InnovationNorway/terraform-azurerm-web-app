@@ -119,9 +119,11 @@ resource "azurerm_app_service" "main" {
 
 resource "azurerm_app_service_custom_hostname_binding" "main" {
   count               = length(var.custom_hostnames)
-  hostname            = var.custom_hostnames[count.index]
+  hostname            = try(var.custom_hostnames[count.index].name, var.custom_hostnames[count.index])
   app_service_name    = azurerm_app_service.main.name
   resource_group_name = data.azurerm_resource_group.main.name
+  ssl_state           = try(var.custom_hostnames[count.index].ssl_state, "SniEnabled")
+  thumbprint          = try(var.custom_hostnames[count.index].thumbprint, null)
 }
 
 resource "azurerm_key_vault_access_policy" "main" {
